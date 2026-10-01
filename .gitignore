@@ -1,0 +1,6 @@
+# Herramientas locales y caches: no forman parte del codigo fuente.
+.tools/
+.downloads/
+.gradle-local/
+node_modules/
+local.properties
