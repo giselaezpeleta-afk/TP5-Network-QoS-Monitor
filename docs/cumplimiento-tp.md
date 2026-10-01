@@ -3,26 +3,30 @@
 La entrega es Android por autorización del docente comunicada por el usuario.
 «Implementado» y «probado en teléfono» se registran por separado.
 
-| Requisito | Situación al iniciar esta ampliación |
+| Requisito | Estado de implementación; validación física separada |
 |---|---|
 | RF-01 Red y operador | Implementado y probado en A55 |
-| RF-02 RTT, tres hosts, min/avg/max/jitter | Implementado, tests y APK; falta A55 |
-| RF-03 Descarga/subida Mbps y backend | Pendiente |
-| RF-04 Timestamp y GPS | Timestamp parcial; falta GPS/persistencia |
-| RF-05 Historial en mapa con heatmap | Pendiente |
-| RF-06 Gráficos por sesión | Pendiente |
-| RF-07 Muestreo background y alertas | Pendiente; sujeto a restricciones Android |
-| RF-08 Exportar CSV/JSON | Pendiente |
-| RF-09 Filtros de red, fechas y zona | Pendiente |
+| RF-02 RTT, tres hosts, min/avg/max/jitter | Implementado; usuario confirmó 10/10 en tres destinos en A55 |
+| RF-03 Descarga/subida Mbps y backend | Cliente nativo + Express + Dockerfile; pruebas HTTP aprobadas, falta prueba A55 |
+| RF-04 Timestamp y GPS | SQLite por muestra, LocationManager con permisos/precisión/edad; falta validación GPS A55 |
+| RF-05 Historial en mapa con heatmap | OpenStreetMap + Leaflet local, calor de RTT, atribución; falta validación A55 |
+| RF-06 Gráficos por sesión | Series SVG RTT por host y Mbps por dirección, sin interpolar pérdidas |
+| RF-07 Muestreo background y alertas | Servicio location/dataSync iniciado por usuario, 10 sondas/destino, umbrales editables; falta pantalla bloqueada A55 |
+| RF-08 Exportar CSV/JSON | FileProvider y selector de Android; falta compartir archivo real |
+| RF-09 Filtros de red, fechas y zona | SQLite, límites geográficos y fechas locales; tests de validación aprobados |
 
 ## Trabajo autorizado en PC
 
-- [ ] Backend Express de throughput y contenedor.
-- [ ] Transferencias medidas en cliente y geolocalización con permisos.
-- [ ] Historial SQLite, filtros y exportación de archivos.
-- [ ] Mapa de calor y gráficos de sesiones reales.
-- [ ] Servicio Android iniciado por el usuario, notificación y umbrales configurables.
-- [ ] Tests de lógica y compilación APK, documentación técnica y guion de prueba.
+- [x] Backend Express de throughput y Dockerfile (contenedor no ejecutado).
+- [x] Transferencias medidas en cliente y geolocalización con permisos.
+- [x] Historial SQLite, filtros y exportación de archivos.
+- [x] Mapa de calor y gráficos, sin datos simulados en la app.
+- [x] Servicio Android iniciado por el usuario, notificación y umbrales configurables.
+- [x] Tests de lógica, compilación Kotlin, documentación técnica y guion de prueba.
+- [x] APK ampliado compilado, firma verificada e instalado en A55; apertura correcta.
+
+El usuario confirmó acceso desde Chrome del A55 a `/health` del servidor LAN.
+Prueba de las tres rondas de velocidad solicitada; resultado todavía pendiente.
 
 ## Requiere teléfono / datos del usuario
 

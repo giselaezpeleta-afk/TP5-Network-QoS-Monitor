@@ -2,6 +2,30 @@
 
 Actualizado: 2026-10-01.
 
+## Último avance (prevalece sobre antecedentes)
+
+- Usuario ya en casa; APK anterior de latencia instalado y confirmado 10/10
+  sondas en los tres destinos. No guardar códigos de vinculación.
+- Ampliación implementada: Express HTTP + UDP y Dockerfile; throughput nativo;
+  SQLite/GPS por muestra; filtros/CSV/JSON; Leaflet/OpenStreetMap con calor RTT;
+  gráficos SVG; servicio foreground con notificación y umbrales configurables.
+- 25 tests Jest aprobados, TypeScript y ESLint sin errores. Backend: tres pruebas
+  HTTP/UDP aprobadas. APK completo compiló (10m21s), firma verificada, instalado
+  y abierto correctamente en A55. Tamaño 20933121 bytes (~19.96 MiB).
+  SHA256: d5187f6632d85672ea491f1587e82c23d64eabfbae92bd78fe8da79f8540e674.
+- PC Wi-Fi detectada 192.168.101.3, backend para LAN en 5050 TCP / 5051 UDP.
+  Puede cambiar la IP. Sin firewall modificado ni servidor público.
+  Servidor ejecutándose; usuario confirmó `/health` desde Chrome en A55.
+  Se pidió probar ubicación y tres rondas de velocidad de 1 MiB; falta respuesta.
+- Dependencias nuevas fijadas: Express 5.2.1, WebView 14.0.1, SVG 15.15.5,
+  Leaflet 1.9.4, leaflet.heat 0.2.0. Assets mapa locales con licencias; regenerar
+  con `node scripts/bundle-map.cjs`.
+- Guía integral y límites en `docs/prueba-integral.md` y
+  `docs/arquitectura-y-limites.md`. Pendientes físicos: throughput, GPS/mapa,
+  exportación, bloqueo/cierre UI/alertas y video de dos sesiones reales.
+- Git tiene commit inicial de telefonía/latencia y backend `83370f9`.
+  Ampliación móvil y documentación preparadas para commit local.
+
 ## Preferencias del usuario
 
 - Español claro, explicar cambios y agregar comentarios útiles al código.
@@ -80,6 +104,18 @@ Engram MCP se verificó después del reinicio de VS Code y recuperó la memoria.
 Próximo paso del TP: instalar/probar el APK de latencia en el A55 cuando
 el usuario vuelva a casa. No repetir las pruebas ya aprobadas sin cambios nuevos.
 
+## Prueba real y ampliación en curso
+
+- El A55 volvió a conectarse y se instaló el APK Standalone de latencia.
+- El usuario confirmó 10/10 sondas en los tres destinos y valores visibles
+  de RTT/jitter. Los números reportados no se asignan a una métrica sin captura.
+- Decisiones autorizadas: mapa OpenStreetMap sin clave; servidor de velocidad
+  primero en la PC con URL editable; intervalos y umbrales configurables con
+  valores iniciales de prueba documentados.
+- Backend Express en preparación: descarga y eco de subida de 1, 5 y 10 MiB.
+- La ampliación todavía no está en el APK instalado: GPS, historial SQLite,
+  mapa, gráficos, muestreo en segundo plano, alertas y exportación pendientes.
+
 ## Comandos del proyecto
 
 ```powershell
@@ -87,10 +123,10 @@ el usuario vuelva a casa. No repetir las pruebas ya aprobadas sin cambios nuevos
 npm.cmd run lint
 npx.cmd tsc --noEmit
 npm.cmd test -- --runInBand
-# Desde la raíz (evitar compilar hasta terminar la tarea Gentle AI)
+# Desde la raíz
 .\scripts\build-android.ps1 -Mode Standalone
 ```
 
 Requisitos completos en el PDF raíz y decisiones previas en `README.md`.
-Pendientes posteriores: throughput, GPS, SQLite, mapa, gráficos, background,
-notificaciones, exportación, Git y documentación de entrega.
+Pendientes de entrega: validación física ampliada, video, destino del repositorio
+y backend público si se necesita probar velocidad por 4G.

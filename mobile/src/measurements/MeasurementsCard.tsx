@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { colors } from '../theme';
 import { summarize, Transport } from './statistics';
 import { SAMPLE_COUNT, TIMEOUT_MS, useMeasurements } from './useMeasurements';
+import NativeQosHistory from '../specs/NativeQosHistory';
+import type { Target } from './statistics';
 
 const initialTargets = ['1.1.1.1', '8.8.8.8', '9.9.9.9'].map(host => ({
   host,
@@ -29,6 +31,21 @@ export function MeasurementsCard({
 }) {
   const [targets, setTargets] = useState(initialTargets);
   const measurement = useMeasurements(networkKey, connected);
+  useEffect(() => {
+    let mounted = true;
+    NativeQosHistory?.getSettings()
+      .then(value => {
+        const saved = JSON.parse(value).targets as Target[] | undefined;
+        if (mounted && saved?.length === 3)
+          setTargets(
+            saved.map(target => ({ ...target, port: String(target.port) })),
+          );
+      })
+      .catch(() => {});
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   function edit(index: number, field: 'host' | 'port', value: string) {
     setTargets(current =>

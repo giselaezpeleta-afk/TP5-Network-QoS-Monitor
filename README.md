@@ -239,8 +239,9 @@ configuración DNS del teléfono ni envía consultas DNS a esos servicios.
   socket queda asociado a la red activa de Android y se cierra al terminar.
   El usuario puede cancelar; salir de la app o cambiar de red interrumpe la
   serie y conserva los resultados parciales sin mezclar conexiones.
-- Los resultados de esta etapa viven en memoria de la pantalla. SQLite, GPS,
-  throughput, gráficos e historial persistente siguen pendientes.
+- Las muestras se guardan en SQLite con sesión, timestamp, red y posición
+  disponible. Las sesiones parciales se conservan. Historial, filtros,
+  exportación CSV/JSON, gráficos y mapa están implementados en la ampliación.
 
 Se usa un segundo TurboModule propio (`NativeNetworkProbe`) con sockets nativos
 de Java/Kotlin. El PDF propone `react-native-tcp-socket` como librería sugerida;
@@ -253,11 +254,40 @@ de los hosts por un servidor de eco propio y su puerto; una IP privada de la PC
 solo sirve mientras teléfono y PC comparten una red alcanzable. No hay servidor
 público desplegado ni reglas de firewall añadidas automáticamente.
 
-Verificación de esta etapa: ESLint, TypeScript, 19 pruebas Jest, seis Kotlin y
-dos Node pasaron. El APK Standalone ARM64 compiló correctamente. Instalación y
-mediciones reales en el A55 quedan pendientes: el usuario está trabajando en
-remoto. Guía: `docs/prueba-latencia.md`; comando de actualización:
+Verificación de latencia: seis pruebas Kotlin y pruebas de JavaScript aprobadas;
+el usuario confirmó 10/10 sondas en los tres destinos desde el A55. En la
+ampliación pasaron TypeScript, ESLint, 25 pruebas Jest y tres Node; Kotlin
+compiló. La validación física de las funciones nuevas sigue pendiente.
+Guía: `docs/prueba-integral.md`; comando de actualización:
 `scripts/install-standalone.ps1`.
+
+## Velocidad, historial y monitoreo
+
+Backend propio con Express, descarga fija y eco de subida; tres rondas de
+1/5/10 MiB desde Kotlin, sin compresión ni resultados inventados. Para LAN:
+
+```powershell
+cd backend
+npm.cmd ci
+cd ..
+.\scripts\start-backend.ps1 -BindAddress '<IP LAN de tu PC>'
+```
+
+En la app ingresar `http://<IP LAN>:5050`. PC y teléfono deben compartir una red
+alcanzable. Para 4G se necesita desplegar el backend en una dirección pública
+HTTPS; no se ha desplegado. Dockerfile opcional en `backend`.
+
+Habilitar ubicación antes de medir para asociar coordenadas reales. El historial
+permite filtros de red, fecha local y área (sur,oeste,norte,este), gráficos por
+sesión, mapa OpenStreetMap con calor de RTT y archivos CSV/JSON. Exportar comparte
+también las ubicaciones: elegir conscientemente el destinatario en Android.
+
+El monitoreo se inicia y detiene desde la app/notificación, reutiliza los destinos
+de la última medición y no hace speed tests automáticos. Intervalos/umbrales se
+pueden editar. Android y el ahorro de batería pueden limitar su funcionamiento.
+
+Documentación: [decisiones y límites](docs/arquitectura-y-limites.md),
+[prueba y entrega](docs/prueba-integral.md), [seguimiento del PDF](docs/cumplimiento-tp.md).
 
 ## Memoria de desarrollo
 

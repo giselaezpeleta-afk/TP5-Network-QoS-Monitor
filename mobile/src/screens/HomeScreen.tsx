@@ -14,6 +14,9 @@ import { colors } from '../theme';
 import { useTelephony } from '../telephony/useTelephony';
 import { TelephonyCard } from '../telephony/TelephonyCard';
 import { MeasurementsCard } from '../measurements/MeasurementsCard';
+import { ThroughputCard } from '../measurements/ThroughputCard';
+import { MonitorCard } from '../history/MonitorCard';
+import { HistoryCard } from '../history/HistoryCard';
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
@@ -133,6 +136,7 @@ export function HomeScreen() {
           cellularActive={network.type === 'cellular'}
         />
 
+        <MonitorCard />
         <MeasurementsCard
           networkKey={`${network.type}|${
             network.details && 'ipAddress' in network.details
@@ -141,6 +145,8 @@ export function HomeScreen() {
           }`}
           connected={network.isConnected}
         />
+        <ThroughputCard networkKey={`${network.type}|${network.isConnected}`} />
+        <HistoryCard />
       </ScrollView>
     </SafeAreaView>
   );

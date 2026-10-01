@@ -1,7 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 import NativeNetworkProbe from '../specs/NativeNetworkProbe';
+import NativeQosHistory from '../specs/NativeQosHistory';
 import { Sample, Target, validateTargets } from './statistics';
+import {
+  acquireMeasurement,
+  ensureMonitorStopped,
+  recordSample,
+  releaseMeasurement,
+} from '../history/model';
 
 export type HostResult = { target: Target; samples: Sample[] };
 type RunControl = {
@@ -71,6 +78,10 @@ export function useMeasurements(networkKey: string, connected: boolean | null) {
       return;
     }
     const control: RunControl = { stopped: false, requestId: null };
+    if (!acquireMeasurement('latency')) {
+      setMessage('Ya hay otra medición activa. Esperá a que termine.');
+      return;
+    }
     run.current = control;
     setRunning(true);
     setMessage(null);
@@ -81,7 +92,15 @@ export function useMeasurements(networkKey: string, connected: boolean | null) {
     }));
     setResults(collected.map(entry => ({ ...entry, samples: [] })));
     let nativeNetwork: string | null = null;
+    const session = `latency-${Date.now()}`;
     try {
+      await ensureMonitorStopped();
+      if (NativeQosHistory) {
+        const settings = JSON.parse(await NativeQosHistory.getSettings());
+        await NativeQosHistory.saveSettings(
+          JSON.stringify({ ...settings, targets }),
+        );
+      }
       for (
         let hostIndex = 0;
         hostIndex < collected.length && !control.stopped;
@@ -116,7 +135,13 @@ export function useMeasurements(networkKey: string, connected: boolean | null) {
             break;
           }
           nativeNetwork = result.networkId;
-          entry.samples.push({ ...result, sequence, timestamp: Date.now() });
+          const sample = { ...result, sequence, timestamp: Date.now() };
+          entry.samples.push(sample);
+          await recordSample(session, 'latency', sample.timestamp, {
+            ...sample,
+            target: entry.target,
+            source: 'foreground',
+          });
           setResults(
             collected.map(item => ({ ...item, samples: [...item.samples] })),
           );
@@ -139,17 +164,20 @@ export function useMeasurements(networkKey: string, connected: boolean | null) {
       }
       if (!control.stopped && mounted.current) {
         setMessage(
-          'Medición terminada. Los resultados se conservan en esta pantalla hasta iniciar otra o cerrar la app.',
+          'Medición terminada y guardada en el historial del teléfono.',
         );
       }
-    } catch {
+    } catch (error) {
       if (!control.stopped && mounted.current) {
         setMessage(
-          'No se pudo completar la medición. Podés reintentar; se conservaron los resultados parciales.',
+          error instanceof Error
+            ? error.message
+            : 'No se pudo completar o guardar la medición. Resultados parciales en pantalla.',
         );
       }
     } finally {
       run.current = null;
+      releaseMeasurement('latency');
       if (mounted.current) {
         setRunning(false);
       }
