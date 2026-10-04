@@ -2,6 +2,25 @@
 
 Actualizado: 2026-10-04.
 
+## Preparación de entrega y acordeón de Historial
+
+- Cada sesión despliega su gráfico inmediatamente debajo de su fecha y se
+  cierra con otro toque; usuario confirmó ambos comportamientos en A55.
+- Auditoría PDF: video de 3–5 minutos con al menos dos sesiones reales en mapa;
+  pueden ser ambas Wi-Fi. No exige web ni dos redes diferentes para el video.
+- Agregado HistoryProvider (Context + useReducer) para resultados compartidos
+  por Historial/Mapa, conforme a la arquitectura del PDF; SQLite persiste datos.
+- Guía de todos los parámetros: docs/guia-de-mediciones.md. Guion y entregables:
+  docs/guion-y-entrega.md. Cumplimiento actualizado con UDP/velocidad confirmados.
+- scripts/show-phone.ps1 -Record prepara MP4 sin audio en grabaciones/ (ignorada
+  por Git). No se inició una grabación ni se inventaron evidencias.
+- TypeScript, ESLint y 31 Jest aprobados tras el store. Sintaxis PowerShell
+  del script de grabación validada; falta probar una toma real.
+- Pendientes físicos: dos sesiones GPS/mapa, filtros y exportación real,
+  monitoreo bloqueado y detención. Pendientes de entrega: video y destino
+  del repositorio. Usuario prefiere completar personalmente los datos de
+  integrantes: dejarlos pendientes y no volver a pedirlos.
+
 ## Correcciones de claridad tras prueba del usuario
 
 - Capturas: UDP contra servidores DNS no recibía eco; velocidad agotaba conexión

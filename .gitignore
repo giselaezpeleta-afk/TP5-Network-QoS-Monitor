@@ -4,3 +4,5 @@
 .gradle-local/
 node_modules/
 local.properties
+# Videos reales de demostracion: se entregan aparte, no como codigo fuente.
+grabaciones/

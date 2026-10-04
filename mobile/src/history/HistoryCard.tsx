@@ -5,6 +5,7 @@ import { HistoryRow } from './model';
 import { Action, panelStyles } from './MonitorCard';
 import { SessionChart } from './SessionChart';
 import { QualityMap } from './QualityMap';
+import { useHistoryStore } from './HistoryStore';
 
 export function buildFilters(
   network: string,
@@ -70,50 +71,59 @@ export function HistoryCard({
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [bounds, setBounds] = useState('');
-  const [rows, setRows] = useState<HistoryRow[]>([]);
-  const [total, setTotal] = useState(0);
+  const {
+    state: { rows, total, threshold },
+    dispatch,
+  } = useHistoryStore();
   const [message, setMessage] = useState(
     'Aplicá filtros o cargá todas las mediciones.',
   );
   const [selected, setSelected] = useState<string | null>(null);
-  const [threshold, setThreshold] = useState(500);
   const [busy, setBusy] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState('{}');
   // Al entrar se refrescan los filtros ya aplicados. Editar un campo no lanza
   // consultas ni cambia el mapa hasta tocar Aplicar filtros.
-  const loadFiltered = useCallback(async (filters: string) => {
-    if (!NativeQosHistory || loading.current) return;
-    loading.current = true;
-    setBusy(true);
-    try {
-      const result = JSON.parse(await NativeQosHistory.query(filters));
-      const settings = JSON.parse(await NativeQosHistory.getSettings());
-      setThreshold(settings.rttThreshold ?? 500);
-      setRows(result.rows);
-      setTotal(result.total);
-      setSelected(previous =>
-        result.rows.some((row: HistoryRow) => row.session === previous)
-          ? previous
-          : null,
-      );
-      setAppliedFilters(filters);
-      applied.current = filters;
-      setMessage(
-        result.total
-          ? `${result.total} muestras encontradas. Se muestran hasta 2000; exportación incluye todas las filtradas.`
-          : 'No hay mediciones para estos filtros.',
-      );
-    } catch (error) {
-      setMessage(
-        error instanceof Error
-          ? error.message
-          : 'No se pudo cargar el historial.',
-      );
-    } finally {
-      loading.current = false;
-      setBusy(false);
-    }
-  }, []);
+  const loadFiltered = useCallback(
+    async (filters: string) => {
+      if (!NativeQosHistory || loading.current) return;
+      loading.current = true;
+      setBusy(true);
+      try {
+        const result = JSON.parse(await NativeQosHistory.query(filters));
+        const settings = JSON.parse(await NativeQosHistory.getSettings());
+        dispatch({
+          type: 'loaded',
+          payload: {
+            rows: result.rows,
+            total: result.total,
+            threshold: settings.rttThreshold ?? 500,
+          },
+        });
+        setSelected(previous =>
+          result.rows.some((row: HistoryRow) => row.session === previous)
+            ? previous
+            : null,
+        );
+        setAppliedFilters(filters);
+        applied.current = filters;
+        setMessage(
+          result.total
+            ? `${result.total} muestras encontradas. Se muestran hasta 2000; exportación incluye todas las filtradas.`
+            : 'No hay mediciones para estos filtros.',
+        );
+      } catch (error) {
+        setMessage(
+          error instanceof Error
+            ? error.message
+            : 'No se pudo cargar el historial.',
+        );
+      } finally {
+        loading.current = false;
+        setBusy(false);
+      }
+    },
+    [dispatch],
+  );
   useEffect(() => {
     if (active) loadFiltered(applied.current);
   }, [active, mode, loadFiltered]);
@@ -261,20 +271,23 @@ export function HistoryCard({
               samples[samples.length - 1].timestamp,
             ).toLocaleString();
             return (
-              <Action
-                key={session}
-                title={`${date} · ${samples[0].network} · ${
-                  samples[0].kind === 'latency' ? 'latencia' : 'velocidad'
-                } · ${samples.length} muestras`}
-                onPress={() =>
-                  setSelected(selected === session ? null : session)
-                }
-              />
+              <View key={session}>
+                <Action
+                  title={`${selected === session ? '▾' : '▸'} ${date} · ${
+                    samples[0].network
+                  } · ${
+                    samples[0].kind === 'latency' ? 'latencia' : 'velocidad'
+                  } · ${samples.length} muestras`}
+                  onPress={() =>
+                    setSelected(selected === session ? null : session)
+                  }
+                />
+                {/* El gráfico pertenece a esta sesión: se despliega junto a su
+                  botón para evitar buscarlo al final de todo el historial. */}
+                {selected === session && <SessionChart rows={samples} />}
+              </View>
             );
           })}
-          {selected && (
-            <SessionChart rows={rows.filter(row => row.session === selected)} />
-          )}
         </>
       )}
     </View>

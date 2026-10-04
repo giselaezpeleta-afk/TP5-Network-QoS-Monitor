@@ -7,11 +7,16 @@ La consigna original está en `TP5 Network_QoS_Monitor.pdf`.
 
 - Entrega para Android, según la autorización del docente comunicada por el alumno.
 - Dispositivo de prueba: Samsung Galaxy A55 5G con Android 16.
-- Diseño sencillo y prolijo. La propuesta visual todavía debe revisarse.
+- Diseño sencillo, con menú por secciones y gráficos desplegables por sesión.
 - Desarrollo por etapas, con explicaciones y comentarios útiles en el código.
 - Equipo de desarrollo con 8 GB de RAM: usar el teléfono físico y evitar el emulador.
 
 ## Preparación del entorno
+
+Para presentar el trabajo: [guion y entregables](docs/guion-y-entrega.md),
+[guía de mediciones](docs/guia-de-mediciones.md) y
+[estado de cumplimiento del PDF](docs/cumplimiento-tp.md).
+
 
 Node.js, npm y Git están disponibles. La base de React Native 0.87.1 está en
 `mobile/`. Los scripts de `scripts/` preparan un JDK portable y las herramientas

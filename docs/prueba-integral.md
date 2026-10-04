@@ -49,15 +49,15 @@ El usuario presentará por Meet usando scrcpy y Wi-Fi, con video de respaldo.
 No se prepara una web adicional ni es necesario cambiar de red en la demostración
 en vivo. Las pruebas de redes distintas se pueden documentar en el video.
 
-Comprobación de la nueva navegación, pendiente en A55 al actualizar el APK:
-abrir/cerrar menú, cambiar entre secciones, volver a una prueba en curso desde
-el aviso y verificar que se conservan campos/resultados. El botón Atrás vuelve
+El usuario confirmó el menú y acceso al mapa en A55. Para la revisión final,
+volver a una prueba en curso desde el aviso y verificar que se conservan
+campos/resultados. El botón Atrás vuelve
 a Inicio desde las secciones; si el menú está abierto, lo cierra primero.
 
 - APK Standalone y repositorio con commits, README y backend.
-- Dos sesiones reales identificables (por ejemplo Wi-Fi y 4G TCP), con gráficos
+- Dos sesiones reales identificables (pueden ser ambas Wi-Fi), con gráficos
   y ubicaciones. Anotar límites del servidor LAN sin aparentar pruebas públicas.
-- Video de 3–5 min: 30 s red/operador; 60 s mediciones Wi-Fi y 4G; 45 s mapa y
-  gráficos; 45 s muestreo bloqueado/alerta; 30 s filtros y exportación. Mostrar
-  datos obtenidos realmente, no sembrar filas de demostración.
+- Video de 3–5 min: seguir [guion actualizado](guion-y-entrega.md). No es
+  obligatorio mostrar dos redes distintas; mostrar datos obtenidos realmente,
+  no sembrar filas de demostración.
 - Confirmar destino del repositorio y requisitos de presentación con la cátedra.

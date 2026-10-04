@@ -24,6 +24,15 @@ La firma es de desarrollo para este TP, no una clave de distribución pública.
 
 ## Qué se mide
 
+### Estado reactivo de resultados
+
+`HistoryProvider` usa Context + useReducer para compartir la consulta de
+resultados entre Historial y Mapa. Una acción actualiza filas, total y umbral
+de forma conjunta. Es una vista en memoria limitada a 2.000 muestras; SQLite
+sigue siendo la fuente persistente, también para el servicio de fondo. Los
+formularios y el progreso de pruebas manuales usan estado local de React.
+
+
 - TCP: tiempo de establecimiento de conexión, excluido DNS. Fallos de conexión
   no se etiquetan como pérdida de paquetes.
 - UDP: eco exacto de un identificador único. Ausencia de eco en 2 s no distingue
