@@ -16,6 +16,8 @@ Actualizado: 2026-10-04.
   por Git). No se inició una grabación ni se inventaron evidencias.
 - TypeScript, ESLint y 31 Jest aprobados tras el store. Sintaxis PowerShell
   del script de grabación validada; falta probar una toma real.
+- APK final compilado en 2m11s, instalado y abierto correctamente en A55.
+  SHA256: 27d7d66adb341bb84624b3d6e686f32f6c42cb3be99d7f5dc6dd82195e8e4d2a.
 - Pendientes físicos: dos sesiones GPS/mapa, filtros y exportación real,
   monitoreo bloqueado y detención. Pendientes de entrega: video y destino
   del repositorio. Usuario prefiere completar personalmente los datos de
