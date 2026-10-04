@@ -28,6 +28,20 @@ export const panelStyles = StyleSheet.create({
   },
   title: { color: colors.ink, fontSize: 19, fontWeight: '700' },
   text: { color: colors.muted, fontSize: 13, lineHeight: 20 },
+  fieldLabel: {
+    color: colors.ink,
+    fontSize: 14,
+    fontWeight: '700',
+    marginTop: 6,
+  },
+  stateBox: {
+    backgroundColor: colors.accentSoft,
+    borderRadius: 12,
+    padding: 14,
+    gap: 8,
+  },
+  activeBox: { backgroundColor: '#E2F3EB' },
+  disabledButton: { opacity: 0.5 },
   input: {
     color: colors.ink,
     borderWidth: 1,
@@ -53,7 +67,7 @@ export function Action({
       accessibilityRole="button"
       disabled={disabled}
       accessibilityState={{ disabled }}
-      style={panelStyles.button}
+      style={[panelStyles.button, disabled && panelStyles.disabledButton]}
       onPress={onPress}
     >
       <Text style={panelStyles.buttonText}>{title}</Text>
@@ -67,6 +81,7 @@ export function MonitorCard() {
     'Ubicación opcional para las pruebas manuales; necesaria para el monitoreo con pantalla apagada.',
   );
   const [busy, setBusy] = useState(false);
+  const [targets, setTargets] = useState(defaults.targets);
   const [fields, setFields] = useState({
     intervalSeconds: '60',
     rttThreshold: '500',
@@ -78,6 +93,7 @@ export function MonitorCard() {
     NativeQosHistory?.getSettings()
       .then(value => {
         const saved = { ...defaults, ...JSON.parse(value) } as Settings;
+        if (mounted) setTargets(saved.targets);
         if (mounted)
           setFields({
             intervalSeconds: String(saved.intervalSeconds),
@@ -98,7 +114,7 @@ export function MonitorCard() {
       }
     }
     refresh();
-    const timer = setInterval(refresh, 5000);
+    const timer = setInterval(refresh, 2000);
     const subscription = AppState.addEventListener('change', state => {
       if (state !== 'active')
         NativeQosHistory?.setLocationEnabled(false).catch(() => {});
@@ -167,9 +183,11 @@ export function MonitorCard() {
           Object.entries(fields).map(([key, value]) => [key, Number(value)]),
         ),
       };
+      setTargets(settings.targets);
+      setStatus('Iniciando…');
       await NativeQosHistory.startMonitoring(JSON.stringify(settings));
       await NativeQosHistory.saveSettings(JSON.stringify(settings));
-      setStatus('Iniciando…');
+      setStatus(await NativeQosHistory.monitoringStatus());
       setMessage(
         'El monitoreo usa los destinos de la última medición manual. Guardará un lote de 10 sondas por destino, seguido del intervalo elegido.',
       );
@@ -194,7 +212,79 @@ export function MonitorCard() {
         disabled={busy}
         onPress={() => action(location)}
       />
-      <Text style={panelStyles.text}>Estado: {status}</Text>
+      <View
+        style={[
+          panelStyles.stateBox,
+          status === 'Activo' && panelStyles.activeBox,
+        ]}
+      >
+        <Text accessibilityLiveRegion="polite" style={panelStyles.title}>
+          Estado: {status}
+        </Text>
+        <Text style={panelStyles.text}>
+          {status === 'Activo'
+            ? 'El servicio está activo. Guarda sondas en el Historial aunque apagues la pantalla. No realiza pruebas de velocidad.'
+            : 'Iniciá el monitoreo para guardar lotes de latencia automáticamente.'}
+        </Text>
+        {status === 'Activo' && (
+          <>
+            <Text style={panelStyles.fieldLabel}>
+              Destinos monitoreados · 10 sondas por destino
+            </Text>
+            {targets.map(target => (
+              <Text
+                key={`${target.host}:${target.port}`}
+                style={panelStyles.text}
+              >
+                {target.host}:{target.port} · {target.transport.toUpperCase()}
+              </Text>
+            ))}
+            <Text style={panelStyles.text}>
+              Pausa configurada después de cada lote: {fields.intervalSeconds}{' '}
+              s. Revisá las nuevas sesiones en Historial.
+            </Text>
+          </>
+        )}
+        <Action
+          title={
+            busy
+              ? 'Procesando…'
+              : status === 'Activo'
+              ? 'Monitoreo iniciado'
+              : status === 'Iniciando…'
+              ? 'Iniciando monitoreo…'
+              : 'Iniciar monitoreo periódico'
+          }
+          disabled={
+            busy ||
+            status === 'Activo' ||
+            status === 'Iniciando…' ||
+            status === 'Deteniendo…'
+          }
+          onPress={() => action(start)}
+        />
+        <Action
+          title={
+            status === 'Deteniendo…'
+              ? 'Deteniendo monitoreo…'
+              : 'Detener monitoreo'
+          }
+          disabled={busy || (status !== 'Activo' && status !== 'Iniciando…')}
+          onPress={() =>
+            action(async () => {
+              setStatus('Deteniendo…');
+              await NativeQosHistory?.stopMonitoring();
+              // La consulta periódica confirma la detención real del servicio.
+              setMessage(
+                'Se solicitó detener el monitoreo. El estado se actualizará cuando Android lo confirme.',
+              );
+            })
+          }
+        />
+      </View>
+      <Text style={panelStyles.fieldLabel}>
+        Configuración de intervalos y alertas
+      </Text>
       {Object.entries(fields).map(([key, value]) => (
         <View key={key}>
           <Text style={panelStyles.text}>
@@ -205,29 +295,15 @@ export function MonitorCard() {
             style={panelStyles.input}
             keyboardType="numeric"
             value={value}
-            editable={status !== 'Activo' && !busy}
+            editable={
+              !['Activo', 'Iniciando…', 'Deteniendo…'].includes(status) && !busy
+            }
             onChangeText={text =>
               setFields(current => ({ ...current, [key]: text }))
             }
           />
         </View>
       ))}
-      <Action
-        title="Iniciar monitoreo periódico"
-        disabled={busy || status === 'Activo' || status === 'Iniciando…'}
-        onPress={() => action(start)}
-      />
-      <Action
-        title="Detener monitoreo"
-        disabled={busy}
-        onPress={() =>
-          action(async () => {
-            await NativeQosHistory?.stopMonitoring();
-            setStatus('Detenido');
-            setMessage('Monitoreo detenido. Los datos siguen en el historial.');
-          })
-        }
-      />
       <Text style={panelStyles.text}>
         Valores iniciales de prueba, editables. Alertas como máximo cada 5
         minutos. No ejecuta descargas automáticas. Android puede diferir

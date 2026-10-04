@@ -256,7 +256,7 @@ público desplegado ni reglas de firewall añadidas automáticamente.
 
 Verificación de latencia: seis pruebas Kotlin y pruebas de JavaScript aprobadas;
 el usuario confirmó 10/10 sondas en los tres destinos desde el A55. En la
-ampliación pasaron TypeScript, ESLint, 28 pruebas Jest y tres Node; Kotlin
+ampliación pasaron TypeScript, ESLint, 31 pruebas Jest y tres Node; Kotlin
 compiló. La validación física de las funciones nuevas sigue pendiente.
 Guía: `docs/prueba-integral.md`; comando de actualización:
 `scripts/install-standalone.ps1`.

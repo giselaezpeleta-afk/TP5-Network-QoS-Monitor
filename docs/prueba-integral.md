@@ -19,6 +19,9 @@ destinos con 10/10 sondas en el APK de latencia anterior.
    no desactivar el firewall globalmente. Detener servidor con Ctrl+C al terminar.
 6. Cambiar un destino de latencia por la IP PC, puerto 5051 y UDP. Los otros dos
    permanecen TCP y deben ser hosts diferentes. Verificar ecos y estadísticas.
+   No cambiar solo el protocolo de 1.1.1.1/8.8.8.8/9.9.9.9:53 a UDP: esos
+   servicios esperan consultas DNS, no el identificador de nuestro eco. La
+   ausencia de respuesta a ese protocolo no demuestra pérdida de red.
 7. Cancelar una prueba y cambiar Wi-Fi a 4G durante otra: no debe mezclar redes
    ni guardar una transferencia incompleta como éxito. Repetir TCP en 4G; la IP
    privada PC no sirve para throughput móvil sin un backend público alcanzable.
@@ -30,6 +33,15 @@ destinos con 10/10 sondas en el APK de latencia anterior.
    tráfico de velocidad automático. Verificar denegación de permisos y GPS apagado.
 10. Filtrar por red y día, luego por área que contenga las ubicaciones reales.
     Exportar CSV/JSON, abrir archivos y comprobar fechas, unidades y coordenadas.
+    «Fecha desde» y «Fecha hasta» usan AAAA-MM-DD; el día final se incluye
+    completo. Área opcional: sur,oeste,norte,este, en grados con punto decimal.
+    Dejar campos vacíos incluye todas las fechas o zonas.
+
+Si velocidad informa que no conecta al puerto 5050, comprobar que el servidor
+siga ejecutándose en la PC. El 04/10 el usuario reprodujo ese error y confirmó
+que las tres rondas volvieron a completar después de iniciarlo nuevamente.
+Una sesión sin RTT válidos muestra explicación en vez de ejes vacíos; no es
+correcto dibujar una línea de cero para intentos fallidos.
 
 ## Entrega
 

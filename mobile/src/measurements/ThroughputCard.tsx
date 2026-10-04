@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  ActivityIndicator,
   AppState,
   Pressable,
   StyleSheet,
@@ -31,6 +32,9 @@ export function ThroughputCard({
     onRunningChange?.(running);
   }, [running, onRunningChange]);
   const [results, setResults] = useState<TransferResult[]>([]);
+  const [outcome, setOutcome] = useState<
+    'ready' | 'running' | 'done' | 'cancelled' | 'error'
+  >('ready');
   const [message, setMessage] = useState(
     'Configurá la dirección del servidor propio.',
   );
@@ -55,6 +59,7 @@ export function ThroughputCard({
     control.stopped = true;
     NativeThroughput?.cancel(control.id);
     if (mounted.current) {
+      setOutcome('cancelled');
       setMessage(reason);
     }
   }
@@ -90,6 +95,8 @@ export function ThroughputCard({
     }
     active.current = control;
     setRunning(true);
+    setOutcome('running');
+    setMessage('Preparando la prueba y conectando con el servidor…');
     setResults([]);
     let networkId: string | null = null;
     const session = `throughput-${Date.now()}`;
@@ -134,13 +141,19 @@ export function ThroughputCard({
         }
       }
       if (!control.stopped && mounted.current) {
+        setOutcome('done');
         setMessage('Tres rondas terminadas.');
       }
     } catch (error) {
       if (!control.stopped && mounted.current) {
+        setOutcome('error');
         setMessage(
           error instanceof Error
-            ? error.message
+            ? /failed to connect|connect timed out|connection refused|timeout|timed out/i.test(
+                error.message,
+              )
+              ? 'No se pudo conectar con el servidor. Comprobá que esté encendido en la PC, que ambos equipos usen el mismo Wi-Fi y que la IP y el puerto sean correctos. Podés comprobar la dirección agregando /health en Chrome.'
+              : error.message
             : 'Falló la transferencia. Revisá servidor y conexión.',
         );
       }
@@ -203,9 +216,28 @@ export function ThroughputCard({
           {running ? 'Cancelar velocidad' : 'Iniciar velocidad'}
         </Text>
       </Pressable>
-      <Text accessibilityLiveRegion="polite" style={styles.note}>
-        {message}
-      </Text>
+      <View style={[styles.statusBox, outcome === 'error' && styles.errorBox]}>
+        {running && <ActivityIndicator color={colors.accent} />}
+        <Text accessibilityRole="header" style={styles.result}>
+          {
+            {
+              ready: 'Lista para medir',
+              running: 'Medición en curso',
+              done: 'Medición completada',
+              cancelled: 'Medición interrumpida',
+              error: 'No se pudo completar la prueba',
+            }[outcome]
+          }
+        </Text>
+        <Text accessibilityLiveRegion="polite" style={styles.note}>
+          {message}
+        </Text>
+        {(running || results.length > 0) && (
+          <Text style={styles.result}>
+            Transferencias completadas: {results.length}/6
+          </Text>
+        )}
+      </View>
       {results.map((result, index) => (
         <Text key={index} style={styles.result}>
           Ronda {Math.floor(index / 2) + 1} ·{' '}
@@ -254,4 +286,15 @@ const styles = StyleSheet.create({
   },
   buttonText: { color: colors.surface, fontWeight: '700' },
   result: { color: colors.ink, fontSize: 15 },
+  statusBox: {
+    padding: 14,
+    borderRadius: 12,
+    backgroundColor: colors.accentSoft,
+    gap: 8,
+  },
+  errorBox: {
+    backgroundColor: '#FFF0E8',
+    borderWidth: 1,
+    borderColor: '#E1A384',
+  },
 });

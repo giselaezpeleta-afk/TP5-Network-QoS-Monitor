@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextInput } from 'react-native';
+import { Text, TextInput } from 'react-native';
 import Renderer, { act } from 'react-test-renderer';
 import { ThroughputCard } from '../src/measurements/ThroughputCard';
 import NativeThroughput from '../src/specs/NativeThroughput';
@@ -93,4 +93,7 @@ test('un error no se registra como transferencia exitosa', async () => {
   });
   expect(history.record).not.toHaveBeenCalled();
   expect(native.measure).toHaveBeenCalledTimes(1);
+  expect(
+    app.root.findAllByType(Text).map(node => node.props.children),
+  ).toContain('No se pudo completar la prueba');
 });

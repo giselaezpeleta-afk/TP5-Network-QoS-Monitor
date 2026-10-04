@@ -174,23 +174,41 @@ export function HistoryCard({
               />
             ))}
           </View>
+          <Text style={panelStyles.fieldLabel}>Fecha desde (opcional)</Text>
+          <Text style={panelStyles.text}>
+            Primer día a incluir. Formato: año-mes-día, por ejemplo 2026-10-01.
+          </Text>
           <TextInput
             accessibilityLabel="Fecha desde"
             placeholder="Desde AAAA-MM-DD"
+            placeholderTextColor="#58677D"
             value={from}
             onChangeText={setFrom}
             style={panelStyles.input}
           />
+          <Text style={panelStyles.fieldLabel}>Fecha hasta (opcional)</Text>
+          <Text style={panelStyles.text}>
+            Último día a incluir, completo. Ejemplo: 2026-10-04. Vacío incluye
+            todos los días posteriores.
+          </Text>
           <TextInput
             accessibilityLabel="Fecha hasta"
             placeholder="Hasta AAAA-MM-DD"
+            placeholderTextColor="#58677D"
             value={to}
             onChangeText={setTo}
             style={panelStyles.input}
           />
+          <Text style={panelStyles.fieldLabel}>Área geográfica (opcional)</Text>
+          <Text style={panelStyles.text}>
+            Cuatro límites en grados: sur, oeste, norte, este. Usá punto para
+            decimales y coma para separar. Ejemplo de formato: -35,-59,-34,-58
+            (no es tu ubicación). Dejalo vacío para incluir todas las zonas.
+          </Text>
           <TextInput
             accessibilityLabel="Área geográfica sur oeste norte este"
             placeholder="Área: sur,oeste,norte,este"
+            placeholderTextColor="#58677D"
             value={bounds}
             onChangeText={setBounds}
             style={panelStyles.input}

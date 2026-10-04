@@ -2,6 +2,26 @@
 
 Actualizado: 2026-10-04.
 
+## Correcciones de claridad tras prueba del usuario
+
+- Capturas: UDP contra servidores DNS no recibía eco; velocidad agotaba conexión
+  a PC; el monitoreo sí generaba notificaciones pero sus controles no eran claros;
+  gráficos sin respuestas tenían ejes vacíos y filtros sin títulos visibles.
+- Reiniciado backend LAN 192.168.101.3:5050/5051. Usuario confirmó que velocidad
+  volvió a completar las tres rondas. Mantener servidor encendido para medir.
+- Usuario confirmó respuestas y RTT UDP usando la PC:5051 como destino 1,
+  con los otros dos destinos en TCP:53. Los DNS no eran servidores de eco.
+- Nuevos títulos y ejemplos persistentes para fechas/área en Historial y Mapa.
+  Gráficos explican ausencia de datos, un solo punto o cortes, y separan TCP/UDP.
+- Monitoreo: panel visible de estado, botones iniciando/activo/deteniendo,
+  destinos y pausa; confirmación del servicio cada 2 s. Velocidad: estado,
+  indicador de actividad, contador de transferencias y errores de conexión claros.
+  Aviso específico al elegir UDP para configurar servidor de eco en vez de DNS.
+- TypeScript/ESLint y 31 Jest aprobados. APK compilado (4m11s), firma verificada,
+  instalado y abierto en A55. SHA256:
+  d5f9eaadc5f5d0a94bf69145a1dbc27fcb203cb3a043e2775f4cc71463f54bb1.
+  Falta confirmación visual del usuario sobre estos nuevos estados y títulos.
+
 ## Navegación por secciones
 
 - Menú fijo con Inicio, Latencia, Velocidad, Monitoreo, Historial y Mapa.
@@ -13,7 +33,8 @@ Actualizado: 2026-10-04.
 - APK de navegación compilado (5m34s), instalado y abierto en A55 el 04/10.
   Tamaño: 20941549 bytes. SHA256:
   bda33f6c23ed5de5861857ac06126fe10c9ffeaeb129a672821a8606084aa04c.
-  scrcpy abierto para la prueba. Se pidió confirmar menú y acceso directo al mapa.
+  scrcpy abierto para la prueba. El usuario confirmó las seis secciones del menú
+  y que puede entrar directamente al mapa. Navegación guardada en Git: 83eb251.
 - Usuario confirmó scrcpy visible y eligió presentar por Wi-Fi con video de
   respaldo, sin desarrollar web ni resolver USB para la demostración en vivo.
 - Evitar búsquedas en dependencias/build/cachés. `android/app/src` contiene
@@ -46,7 +67,7 @@ Actualizado: 2026-10-04.
   el usuario. Pendientes físicos: validar coordenadas y filtros del mapa,
   exportación, bloqueo/cierre UI/alertas y video de dos sesiones reales.
 - Git tiene commit inicial de telefonía/latencia, backend `83370f9` y ampliación
-  móvil/documentación `5964162`. Navegación nueva pendiente de commit.
+  móvil/documentación `5964162` y navegación `83eb251`.
 
 ## Preferencias del usuario
 

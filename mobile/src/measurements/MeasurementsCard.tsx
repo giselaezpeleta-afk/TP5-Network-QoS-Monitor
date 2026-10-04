@@ -129,6 +129,19 @@ export function MeasurementsCard({
         servidor de eco; no funciona contra cualquier sitio web. Destinos
         iniciales: Cloudflare, Google y Quad9. No cambia el DNS del teléfono.
       </Text>
+      {targets.some(target => target.transport === 'udp') && (
+        <View style={styles.target}>
+          <Text style={styles.label}>
+            UDP necesita el servidor de eco del TP
+          </Text>
+          <Text style={styles.description}>
+            Cambiar solamente TCP por UDP en 1.1.1.1, 8.8.8.8 o 9.9.9.9:53 no
+            sirve: son servidores DNS. Para probar UDP, configurá la IP de tu PC
+            y el puerto 5051, con el servidor encendido. Podés dejar los otros
+            destinos en TCP.
+          </Text>
+        </View>
+      )}
       <Pressable
         accessibilityRole="button"
         style={styles.button}
