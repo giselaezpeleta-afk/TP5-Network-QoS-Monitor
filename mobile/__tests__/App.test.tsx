@@ -15,14 +15,14 @@ test('permite reintentar cuando falla la actualización de red', async () => {
   });
   await act(async () => {
     await app.root
-      .findAllByProps({ accessibilityRole: 'button' })[0]
+      .findByProps({ accessibilityLabel: 'Actualizar conexión' })
       .props.onPress();
   });
   expect(
     app.root.findAllByProps({ accessibilityRole: 'alert' })[0].props.children,
   ).toContain('Volvé a intentar');
   expect(
-    app.root.findAllByProps({ accessibilityRole: 'button' })[0].props
+    app.root.findByProps({ accessibilityLabel: 'Actualizar conexión' }).props
       .accessibilityState.disabled,
   ).toBe(false);
   await act(async () => {

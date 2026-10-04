@@ -17,10 +17,19 @@ import {
   releaseMeasurement,
 } from '../history/model';
 
-export function ThroughputCard({ networkKey }: { networkKey: string }) {
+export function ThroughputCard({
+  networkKey,
+  onRunningChange,
+}: {
+  networkKey: string;
+  onRunningChange?: (running: boolean) => void;
+}) {
   const [url, setUrl] = useState('');
   const [mib, setMib] = useState(1);
   const [running, setRunning] = useState(false);
+  useEffect(() => {
+    onRunningChange?.(running);
+  }, [running, onRunningChange]);
   const [results, setResults] = useState<TransferResult[]>([]);
   const [message, setMessage] = useState(
     'Configurá la dirección del servidor propio.',

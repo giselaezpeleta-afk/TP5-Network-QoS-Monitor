@@ -25,12 +25,17 @@ const statuses: Record<string, string> = {
 export function MeasurementsCard({
   networkKey,
   connected,
+  onRunningChange,
 }: {
   networkKey: string;
   connected: boolean | null;
+  onRunningChange?: (running: boolean) => void;
 }) {
   const [targets, setTargets] = useState(initialTargets);
   const measurement = useMeasurements(networkKey, connected);
+  useEffect(() => {
+    onRunningChange?.(measurement.running);
+  }, [measurement.running, onRunningChange]);
   useEffect(() => {
     let mounted = true;
     NativeQosHistory?.getSettings()
@@ -62,8 +67,8 @@ export function MeasurementsCard({
       </Text>
       <Text style={styles.description}>
         Compará tres destinos. {SAMPLE_COUNT} sondas por destino, con hasta{' '}
-        {TIMEOUT_MS / 1000} s de espera de respuesta por sonda. Mantené esta
-        pantalla abierta.
+        {TIMEOUT_MS / 1000} s de espera de respuesta por sonda. Mantené la app
+        en primer plano; podés cambiar de sección.
       </Text>
       {targets.map((target, index) => (
         <View key={index} style={styles.target}>

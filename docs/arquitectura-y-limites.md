@@ -2,6 +2,16 @@
 
 ## Componentes
 
+La interfaz se organiza con un menú de seis secciones: Inicio, Latencia,
+Velocidad, Monitoreo, Historial y Mapa. Usa componentes de React Native sin
+agregar una librería de navegación. Cada sección se monta al visitarla y se
+conserva oculta para mantener campos, resultados y mediciones en curso. Las
+secciones ocultas quedan fuera de accesibilidad. Un aviso permite volver a la
+prueba activa. Al salir de la app o cambiar de red se mantienen las cancelaciones
+anteriores; navegar dentro de la app no las dispara. El WebView del mapa se
+desmonta al ocultarlo para evitar tráfico de mosaicos sin verlo. Historial y Mapa
+comparten filtros y recargan los datos al entrar; los filtros se aplican a pedido.
+
 React Native muestra red/operador, configuraciones, resultados e historial. Los
 TurboModules Kotlin ejecutan telefonía, sondas, transferencias, ubicación y
 SQLite. Los sockets y el tráfico HTTP se asocian a la red activa capturada para

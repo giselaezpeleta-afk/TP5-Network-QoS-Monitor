@@ -1,6 +1,23 @@
 # Estado para retomar sin repetir la exploración
 
-Actualizado: 2026-10-01.
+Actualizado: 2026-10-04.
+
+## Navegación por secciones
+
+- Menú fijo con Inicio, Latencia, Velocidad, Monitoreo, Historial y Mapa.
+  El mapa tiene acceso directo; filtros plegables y recarga al entrar.
+- Las secciones visitadas conservan campos/resultados. Navegar no cancela una
+  medición manual; un aviso permite volver a la prueba activa. Salir de la app
+  o cambiar de red mantiene las cancelaciones anteriores.
+- TypeScript, ESLint y 28 pruebas Jest aprobados, incluidas tres de navegación.
+- APK de navegación compilado (5m34s), instalado y abierto en A55 el 04/10.
+  Tamaño: 20941549 bytes. SHA256:
+  bda33f6c23ed5de5861857ac06126fe10c9ffeaeb129a672821a8606084aa04c.
+  scrcpy abierto para la prueba. Se pidió confirmar menú y acceso directo al mapa.
+- Usuario confirmó scrcpy visible y eligió presentar por Wi-Fi con video de
+  respaldo, sin desarrollar web ni resolver USB para la demostración en vivo.
+- Evitar búsquedas en dependencias/build/cachés. `android/app/src` contiene
+  código propio; consultar acceso si el usuario lo mantiene excluido.
 
 ## Último avance (prevalece sobre antecedentes)
 
@@ -16,17 +33,29 @@ Actualizado: 2026-10-01.
 - PC Wi-Fi detectada 192.168.101.3, backend para LAN en 5050 TCP / 5051 UDP.
   Puede cambiar la IP. Sin firewall modificado ni servidor público.
   Servidor ejecutándose; usuario confirmó `/health` desde Chrome en A55.
-  Se pidió probar ubicación y tres rondas de velocidad de 1 MiB; falta respuesta.
+  El usuario confirmó que velocidad completó las tres rondas de 1 MiB.
+  Habilitó ubicación pero aún no ve mapa: la vista actual requiere muestras de
+  latencia válidas con posición y actualizar historial; velocidad sola no genera
+  puntos de RTT. Se explicaron los pasos. Referencia del docente: panel web;
+  el proyecto actual es APK Android y backend API, sin interfaz web.
 - Dependencias nuevas fijadas: Express 5.2.1, WebView 14.0.1, SVG 15.15.5,
   Leaflet 1.9.4, leaflet.heat 0.2.0. Assets mapa locales con licencias; regenerar
   con `node scripts/bundle-map.cjs`.
 - Guía integral y límites en `docs/prueba-integral.md` y
-  `docs/arquitectura-y-limites.md`. Pendientes físicos: throughput, GPS/mapa,
+  `docs/arquitectura-y-limites.md`. Velocidad confirmada y mapa encontrado por
+  el usuario. Pendientes físicos: validar coordenadas y filtros del mapa,
   exportación, bloqueo/cierre UI/alertas y video de dos sesiones reales.
-- Git tiene commit inicial de telefonía/latencia y backend `83370f9`.
-  Ampliación móvil y documentación preparadas para commit local.
+- Git tiene commit inicial de telefonía/latencia, backend `83370f9` y ampliación
+  móvil/documentación `5964162`. Navegación nueva pendiente de commit.
 
 ## Preferencias del usuario
+
+Presentación: scrcpy 4.1 portable descargado del GitHub oficial, SHA256 verificado.
+Se abrió correctamente por ADB inalámbrico en A55 Android 16, renderer Direct3D11,
+590x1280, 30 fps máximo, 2 Mbps, sin audio ni grabación. Ventana «A55 - Network QoS».
+Reabrir con `scripts/show-phone.ps1`. Compartir esa ventana en Meet. Conservar
+Wi-Fi mientras se use la conexión inalámbrica; para desconectarlo, resolver USB.
+El usuario encontró el mapa en la app y confirmó las tres rondas de velocidad.
 
 - Español claro, explicar cambios y agregar comentarios útiles al código.
 - Entrega solo Android autorizada por la cátedra según el usuario.

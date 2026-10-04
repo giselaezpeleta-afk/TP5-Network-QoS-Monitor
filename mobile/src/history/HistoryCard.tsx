@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 import NativeQosHistory from '../specs/NativeQosHistory';
 import { HistoryRow } from './model';
@@ -56,8 +56,16 @@ export function buildFilters(
   return result;
 }
 
-export function HistoryCard() {
-  const [opened, setOpened] = useState(false);
+export function HistoryCard({
+  mode = 'history',
+  active = true,
+}: {
+  mode?: 'history' | 'map';
+  active?: boolean;
+}) {
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const loading = useRef(false);
+  const applied = useRef('{}');
   const [network, setNetwork] = useState('');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
@@ -68,25 +76,31 @@ export function HistoryCard() {
     'Aplicá filtros o cargá todas las mediciones.',
   );
   const [selected, setSelected] = useState<string | null>(null);
-  const [map, setMap] = useState(false);
   const [threshold, setThreshold] = useState(500);
   const [busy, setBusy] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState('{}');
-  async function load() {
-    if (!NativeQosHistory || busy) return;
+  // Al entrar se refrescan los filtros ya aplicados. Editar un campo no lanza
+  // consultas ni cambia el mapa hasta tocar Aplicar filtros.
+  const loadFiltered = useCallback(async (filters: string) => {
+    if (!NativeQosHistory || loading.current) return;
+    loading.current = true;
     setBusy(true);
     try {
-      const filters = JSON.stringify(buildFilters(network, from, to, bounds));
       const result = JSON.parse(await NativeQosHistory.query(filters));
       const settings = JSON.parse(await NativeQosHistory.getSettings());
       setThreshold(settings.rttThreshold ?? 500);
       setRows(result.rows);
       setTotal(result.total);
-      setSelected(null);
+      setSelected(previous =>
+        result.rows.some((row: HistoryRow) => row.session === previous)
+          ? previous
+          : null,
+      );
       setAppliedFilters(filters);
+      applied.current = filters;
       setMessage(
         result.total
-          ? `${result.total} muestras encontradas. Vista limitada a las 2000 más recientes; exportación incluye todas las filtradas.`
+          ? `${result.total} muestras encontradas. Se muestran hasta 2000; exportación incluye todas las filtradas.`
           : 'No hay mediciones para estos filtros.',
       );
     } catch (error) {
@@ -96,7 +110,22 @@ export function HistoryCard() {
           : 'No se pudo cargar el historial.',
       );
     } finally {
+      loading.current = false;
       setBusy(false);
+    }
+  }, []);
+  useEffect(() => {
+    if (active) loadFiltered(applied.current);
+  }, [active, mode, loadFiltered]);
+  async function load() {
+    try {
+      await loadFiltered(
+        JSON.stringify(buildFilters(network, from, to, bounds)),
+      );
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : 'Revisá los filtros.',
+      );
     }
   }
   async function exportFile(format: string) {
@@ -120,13 +149,13 @@ export function HistoryCard() {
   return (
     <View style={panelStyles.card}>
       <Text accessibilityRole="header" style={panelStyles.title}>
-        Historial, gráficos y mapa
+        {mode === 'map' ? 'Mapa de mediciones' : 'Sesiones guardadas'}
       </Text>
       <Action
-        title={opened ? 'Ocultar historial' : 'Abrir historial'}
-        onPress={() => setOpened(!opened)}
+        title={filtersOpen ? 'Ocultar filtros' : 'Filtrar mediciones'}
+        onPress={() => setFiltersOpen(!filtersOpen)}
       />
-      {opened && (
+      {filtersOpen && (
         <>
           <Text style={panelStyles.text}>
             Filtros de red, fecha local y área geográfica. Dejá los campos
@@ -171,9 +200,26 @@ export function HistoryCard() {
             disabled={busy}
             onPress={load}
           />
-          <Text accessibilityLiveRegion="polite" style={panelStyles.text}>
-            {message}
+        </>
+      )}
+      <Action
+        title="Actualizar mediciones"
+        disabled={busy}
+        onPress={() => loadFiltered(applied.current)}
+      />
+      <Text accessibilityLiveRegion="polite" style={panelStyles.text}>
+        {busy ? 'Cargando mediciones…' : message}
+      </Text>
+      {mode === 'map' ? (
+        <>
+          <Text style={panelStyles.text}>
+            El mapa usa las sondas de latencia con ubicación. Habilitá ubicación
+            en Monitoreo y ejecutá una prueba de Latencia para agregar puntos.
           </Text>
+          {active && <QualityMap rows={rows} threshold={threshold} />}
+        </>
+      ) : (
+        <>
           <View style={panelStyles.row}>
             <Action
               title="Exportar CSV"
@@ -186,11 +232,6 @@ export function HistoryCard() {
               onPress={() => exportFile('json')}
             />
           </View>
-          <Action
-            title={map ? 'Ocultar mapa' : 'Mostrar mapa de calor'}
-            onPress={() => setMap(!map)}
-          />
-          {map && <QualityMap rows={rows} threshold={threshold} />}
           <Text style={panelStyles.text}>
             Sesiones ({sessions.length}). Elegí una para ver sus series
             temporales. Las sesiones que excedan el límite visible pueden

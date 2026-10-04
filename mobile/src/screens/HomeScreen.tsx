@@ -7,16 +7,11 @@ import {
   Text,
   View,
 } from 'react-native';
-import NetInfo, { useNetInfo } from '@react-native-community/netinfo';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import { connectionSummary } from '../network/connectionSummary';
 import { colors } from '../theme';
 import { useTelephony } from '../telephony/useTelephony';
 import { TelephonyCard } from '../telephony/TelephonyCard';
-import { MeasurementsCard } from '../measurements/MeasurementsCard';
-import { ThroughputCard } from '../measurements/ThroughputCard';
-import { MonitorCard } from '../history/MonitorCard';
-import { HistoryCard } from '../history/HistoryCard';
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
@@ -27,9 +22,8 @@ function DetailRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-export function HomeScreen() {
-  // El hook escucha cambios de Android y elimina su suscripción al desmontarse.
-  const network = useNetInfo();
+export function HomeScreen({ network }: { network: NetInfoState }) {
+  // La navegación comparte una sola suscripción de red entre las secciones.
   const summary = connectionSummary(network);
   const telephony = useTelephony(network.type);
   const [refreshing, setRefreshing] = useState(false);
@@ -53,18 +47,8 @@ export function HomeScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.header}>
-          <View style={styles.brandMark} accessible={false}>
-            <Text style={styles.brandLetters}>NQ</Text>
-          </View>
-          <View style={styles.brandText}>
-            <Text style={styles.brandName}>Network QoS</Text>
-            <Text style={styles.brandSubtitle}>MONITOR DE RED</Text>
-          </View>
-        </View>
-
         <Text accessibilityRole="header" style={styles.title}>
           Tu conexión
         </Text>
@@ -117,6 +101,7 @@ export function HomeScreen() {
         )}
         <Pressable
           accessibilityRole="button"
+          accessibilityLabel="Actualizar conexión"
           accessibilityState={{ disabled: refreshing, busy: refreshing }}
           disabled={refreshing}
           onPress={refreshConnection}
@@ -135,20 +120,8 @@ export function HomeScreen() {
           state={telephony}
           cellularActive={network.type === 'cellular'}
         />
-
-        <MonitorCard />
-        <MeasurementsCard
-          networkKey={`${network.type}|${
-            network.details && 'ipAddress' in network.details
-              ? network.details.ipAddress
-              : ''
-          }`}
-          connected={network.isConnected}
-        />
-        <ThroughputCard networkKey={`${network.type}|${network.isConnected}`} />
-        <HistoryCard />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -160,30 +133,6 @@ const styles = StyleSheet.create({
     maxWidth: 600,
     width: '100%',
     alignSelf: 'center',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 32,
-  },
-  brandMark: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    backgroundColor: colors.accentSoft,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  brandLetters: { color: colors.accent, fontSize: 17, fontWeight: '800' },
-  brandText: { flex: 1 },
-  brandName: { fontSize: 18, fontWeight: '700', color: colors.ink },
-  brandSubtitle: {
-    fontSize: 10,
-    letterSpacing: 1.8,
-    marginTop: 3,
-    color: colors.muted,
-    fontWeight: '600',
   },
   title: {
     fontSize: 30,

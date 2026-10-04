@@ -256,12 +256,18 @@ público desplegado ni reglas de firewall añadidas automáticamente.
 
 Verificación de latencia: seis pruebas Kotlin y pruebas de JavaScript aprobadas;
 el usuario confirmó 10/10 sondas en los tres destinos desde el A55. En la
-ampliación pasaron TypeScript, ESLint, 25 pruebas Jest y tres Node; Kotlin
+ampliación pasaron TypeScript, ESLint, 28 pruebas Jest y tres Node; Kotlin
 compiló. La validación física de las funciones nuevas sigue pendiente.
 Guía: `docs/prueba-integral.md`; comando de actualización:
 `scripts/install-standalone.ps1`.
 
 ## Velocidad, historial y monitoreo
+
+Usar el botón **Menú** de la cabecera para ir a **Inicio**, **Latencia**,
+**Velocidad**, **Monitoreo**, **Historial** o **Mapa**. La cabecera permanece
+visible: cada sección tiene su propio desplazamiento y mantiene su estado.
+El mapa tiene acceso directo; ya no hay que buscarlo dentro del historial.
+Para habilitar ubicación y configurar alertas, entrar en **Monitoreo**.
 
 Backend propio con Express, descarga fija y eco de subida; tres rondas de
 1/5/10 MiB desde Kotlin, sin compresión ni resultados inventados. Para LAN:
