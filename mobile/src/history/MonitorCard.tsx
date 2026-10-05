@@ -20,6 +20,7 @@ import { colors } from '../theme';
 
 export const panelStyles = StyleSheet.create({
   card: {
+    flexShrink: 0,
     backgroundColor: colors.surface,
     borderRadius: 20,
     padding: 20,
@@ -34,7 +35,9 @@ export const panelStyles = StyleSheet.create({
     fontWeight: '700',
     marginTop: 6,
   },
+  fieldGroup: { flexShrink: 0, gap: 4 },
   stateBox: {
+    flexShrink: 0,
     backgroundColor: colors.accentSoft,
     borderRadius: 12,
     padding: 14,
@@ -202,114 +205,122 @@ export function MonitorCard() {
     failureThreshold: 'Alerta fallos TCP / ecos UDP ausentes (%)',
   };
   return (
-    <View style={panelStyles.card}>
-      <Text accessibilityRole="header" style={panelStyles.title}>
-        Ubicación y monitoreo
-      </Text>
-      <Text style={panelStyles.text}>{message}</Text>
-      <Action
-        title="Habilitar ubicación"
-        disabled={busy}
-        onPress={() => action(location)}
-      />
-      <View
-        style={[
-          panelStyles.stateBox,
-          status === 'Activo' && panelStyles.activeBox,
-        ]}
-      >
-        <Text accessibilityLiveRegion="polite" style={panelStyles.title}>
-          Estado: {status}
+    <>
+      <View collapsable={false} style={panelStyles.card}>
+        <Text accessibilityRole="header" style={panelStyles.title}>
+          Ubicación y monitoreo
         </Text>
-        <Text style={panelStyles.text}>
-          {status === 'Activo'
-            ? 'El servicio está activo. Guarda sondas en el Historial aunque apagues la pantalla. No realiza pruebas de velocidad.'
-            : 'Iniciá el monitoreo para guardar lotes de latencia automáticamente.'}
-        </Text>
-        {status === 'Activo' && (
-          <>
-            <Text style={panelStyles.fieldLabel}>
-              Destinos monitoreados · 10 sondas por destino
-            </Text>
-            {targets.map(target => (
-              <Text
-                key={`${target.host}:${target.port}`}
-                style={panelStyles.text}
-              >
-                {target.host}:{target.port} · {target.transport.toUpperCase()}
-              </Text>
-            ))}
-            <Text style={panelStyles.text}>
-              Pausa configurada después de cada lote: {fields.intervalSeconds}{' '}
-              s. Revisá las nuevas sesiones en Historial.
-            </Text>
-          </>
-        )}
+        <Text style={panelStyles.text}>{message}</Text>
         <Action
-          title={
-            busy
-              ? 'Procesando…'
-              : status === 'Activo'
-              ? 'Monitoreo iniciado'
-              : status === 'Iniciando…'
-              ? 'Iniciando monitoreo…'
-              : 'Iniciar monitoreo periódico'
-          }
-          disabled={
-            busy ||
-            status === 'Activo' ||
-            status === 'Iniciando…' ||
-            status === 'Deteniendo…'
-          }
-          onPress={() => action(start)}
+          title="Habilitar ubicación"
+          disabled={busy}
+          onPress={() => action(location)}
         />
-        <Action
-          title={
-            status === 'Deteniendo…'
-              ? 'Deteniendo monitoreo…'
-              : 'Detener monitoreo'
-          }
-          disabled={busy || (status !== 'Activo' && status !== 'Iniciando…')}
-          onPress={() =>
-            action(async () => {
-              setStatus('Deteniendo…');
-              await NativeQosHistory?.stopMonitoring();
-              // La consulta periódica confirma la detención real del servicio.
-              setMessage(
-                'Se solicitó detener el monitoreo. El estado se actualizará cuando Android lo confirme.',
-              );
-            })
-          }
-        />
-      </View>
-      <Text style={panelStyles.fieldLabel}>
-        Configuración de intervalos y alertas
-      </Text>
-      {Object.entries(fields).map(([key, value]) => (
-        <View key={key}>
-          <Text style={panelStyles.text}>
-            {labels[key as keyof typeof fields]}
+        <View
+          collapsable={false}
+          style={[
+            panelStyles.stateBox,
+            status === 'Activo' && panelStyles.activeBox,
+          ]}
+        >
+          <Text accessibilityLiveRegion="polite" style={panelStyles.title}>
+            Estado: {status}
           </Text>
-          <TextInput
-            accessibilityLabel={labels[key as keyof typeof fields]}
-            style={panelStyles.input}
-            keyboardType="numeric"
-            value={value}
-            editable={
-              !['Activo', 'Iniciando…', 'Deteniendo…'].includes(status) && !busy
+          <Text style={panelStyles.text}>
+            {status === 'Activo'
+              ? 'El servicio está activo. Guarda sondas en el Historial aunque apagues la pantalla. No realiza pruebas de velocidad.'
+              : 'Iniciá el monitoreo para guardar lotes de latencia automáticamente.'}
+          </Text>
+          {status === 'Activo' && (
+            <>
+              <Text style={panelStyles.fieldLabel}>
+                Destinos monitoreados · 10 sondas por destino
+              </Text>
+              {targets.map(target => (
+                <Text
+                  key={`${target.host}:${target.port}`}
+                  style={panelStyles.text}
+                >
+                  {target.host}:{target.port} · {target.transport.toUpperCase()}
+                </Text>
+              ))}
+              <Text style={panelStyles.text}>
+                Pausa configurada después de cada lote: {fields.intervalSeconds}{' '}
+                s. Revisá las nuevas sesiones en Historial.
+              </Text>
+            </>
+          )}
+          <Action
+            title={
+              busy
+                ? 'Procesando…'
+                : status === 'Activo'
+                ? 'Monitoreo iniciado'
+                : status === 'Iniciando…'
+                ? 'Iniciando monitoreo…'
+                : 'Iniciar monitoreo periódico'
             }
-            onChangeText={text =>
-              setFields(current => ({ ...current, [key]: text }))
+            disabled={
+              busy ||
+              status === 'Activo' ||
+              status === 'Iniciando…' ||
+              status === 'Deteniendo…'
+            }
+            onPress={() => action(start)}
+          />
+          <Action
+            title={
+              status === 'Deteniendo…'
+                ? 'Deteniendo monitoreo…'
+                : 'Detener monitoreo'
+            }
+            disabled={busy || (status !== 'Activo' && status !== 'Iniciando…')}
+            onPress={() =>
+              action(async () => {
+                setStatus('Deteniendo…');
+                await NativeQosHistory?.stopMonitoring();
+                // La consulta periódica confirma la detención real del servicio.
+                setMessage(
+                  'Se solicitó detener el monitoreo. El estado se actualizará cuando Android lo confirme.',
+                );
+              })
             }
           />
         </View>
-      ))}
-      <Text style={panelStyles.text}>
-        Valores iniciales de prueba, editables. Alertas como máximo cada 5
-        minutos. No ejecuta descargas automáticas. Android puede diferir
-        intervalos al ahorrar batería y limita la duración del servicio; Forzar
-        detención lo interrumpe.
-      </Text>
-    </View>
+      </View>
+      {/* Separar controles y ajustes permite que cada tarjeta crezca sin
+        superponer etiquetas cuando cambia el estado del servicio. */}
+      <View collapsable={false} style={panelStyles.card}>
+        <Text style={panelStyles.fieldLabel}>
+          Configuración de intervalos y alertas
+        </Text>
+        {Object.entries(fields).map(([key, value]) => (
+          <View key={key} collapsable={false} style={panelStyles.fieldGroup}>
+            <Text style={panelStyles.text}>
+              {labels[key as keyof typeof fields]}
+            </Text>
+            <TextInput
+              accessibilityLabel={labels[key as keyof typeof fields]}
+              style={panelStyles.input}
+              keyboardType="numeric"
+              value={value}
+              editable={
+                !['Activo', 'Iniciando…', 'Deteniendo…'].includes(status) &&
+                !busy
+              }
+              onChangeText={text =>
+                setFields(current => ({ ...current, [key]: text }))
+              }
+            />
+          </View>
+        ))}
+        <Text style={panelStyles.text}>
+          Valores iniciales de prueba, editables. Alertas como máximo cada 5
+          minutos. No ejecuta descargas automáticas. Android puede diferir
+          intervalos al ahorrar batería y limita la duración del servicio;
+          Forzar detención lo interrumpe.
+        </Text>
+      </View>
+    </>
   );
 }

@@ -8,11 +8,11 @@ La entrega es Android por autorización del docente comunicada por el usuario.
 | RF-01 Red y operador | Implementado y probado en A55 |
 | RF-02 RTT, tres hosts, min/avg/max/jitter | Implementado; usuario confirmó 10/10 en tres destinos en A55 |
 | RF-03 Descarga/subida Mbps y backend | Cliente nativo + Express; usuario confirmó las tres rondas en A55. Dockerfile incluido, contenedor sin ejecutar |
-| RF-04 Timestamp y GPS | SQLite por muestra, LocationManager con permisos/precisión/edad; falta validación GPS A55 |
-| RF-05 Historial en mapa con heatmap | OpenStreetMap + Leaflet local, calor de RTT, atribución; usuario confirmó acceso al mapa, falta comprobar dos sesiones geolocalizadas |
+| RF-04 Timestamp y GPS | JSON real del A55 confirma dos sesiones recientes de 30 muestras cada una con RTT y GPS válido; edad de posición menor de 4,5 s |
+| RF-05 Historial en mapa con heatmap | Mapa y calor visibles en capturas; JSON exportado confirma dos sesiones recientes geolocalizadas |
 | RF-06 Gráficos por sesión | Series SVG RTT por host y Mbps por dirección, sin interpolar pérdidas |
-| RF-07 Muestreo background y alertas | Servicio location/dataSync iniciado por usuario, 10 sondas/destino, umbrales editables; falta pantalla bloqueada A55 |
-| RF-08 Exportar CSV/JSON | FileProvider y selector de Android; falta compartir archivo real |
+| RF-07 Muestreo background y alertas | Nuevas sesiones periódicas visibles; usuario confirmó que tras detener/actualizar no aparecen datos nuevos. Notificaciones vistas previamente. Falta confirmación explícita de pantalla bloqueada |
+| RF-08 Exportar CSV/JSON | Ambos exportados y analizados en PC: JSON 583 filas; CSV 627 filas de otro conjunto/momento, con 553 registros comunes cuyos payloads coinciden |
 | RF-09 Filtros de red, fechas y zona | SQLite, límites geográficos y fechas locales; tests de validación aprobados |
 
 ## Trabajo autorizado en PC

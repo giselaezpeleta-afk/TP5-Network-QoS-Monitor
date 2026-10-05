@@ -2,6 +2,18 @@
 
 Actualizado: 2026-10-04.
 
+## Ajuste visual de Monitoreo y pruebas de entrega
+
+- Usuario detectó superposición de etiquetas/campos y fondo blanco incompleto
+  al expandirse el estado Activo. Se separaron controles y configuración en
+  tarjetas independientes, sin contracción vertical y con grupos nativos
+  explícitos para cada etiqueta/campo. Pendiente confirmación visual en A55.
+- Evidencias reales en docs/registro-pruebas-entrega.md: JSON y CSV abiertos
+  y comparados; dos sesiones recientes con 30 RTT/GPS válidos cada una.
+  Monitoreo genera sesiones y usuario confirmó ausencia de nuevos registros
+  después de detener/actualizar. Pantalla bloqueada no confirmada explícitamente.
+- Video será sin audio, grabado por el usuario. Todavía no se filmó la toma final.
+
 ## Preparación de entrega y acordeón de Historial
 
 - Cada sesión despliega su gráfico inmediatamente debajo de su fecha y se
