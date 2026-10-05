@@ -6,3 +6,12 @@ node_modules/
 local.properties
 # Videos reales de demostracion: se entregan aparte, no como codigo fuente.
 grabaciones/
+# Configuracion local del asistente y entregables binarios generados.
+.codex/
+entrega/*.apk
+entrega/*.zip
+entrega/SHA256SUMS.txt
+~$*.docx
+.env
+.env.*
+!.env.example

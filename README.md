@@ -3,6 +3,9 @@
 Aplicación de React Native para medir, guardar y visualizar la calidad de red.
 La consigna original está en `TP5 Network_QoS_Monitor.pdf`.
 
+Guía breve en Word: [instalación y uso](entrega/TP5-Network-QoS-Guia.docx).
+Archivos para presentar: [carpeta de entrega](entrega/README.md).
+
 ## Decisiones acordadas
 
 - Entrega para Android, según la autorización del docente comunicada por el alumno.
@@ -262,7 +265,9 @@ público desplegado ni reglas de firewall añadidas automáticamente.
 Verificación de latencia: seis pruebas Kotlin y pruebas de JavaScript aprobadas;
 el usuario confirmó 10/10 sondas en los tres destinos desde el A55. En la
 ampliación pasaron TypeScript, ESLint, 31 pruebas Jest y tres Node; Kotlin
-compiló. La validación física de las funciones nuevas sigue pendiente.
+compiló. Las pruebas reales de TCP/UDP, velocidad, GPS, mapa, exportación e
+inicio/detención se registran en [evidencias](docs/registro-pruebas-entrega.md).
+La prueba específica de pantalla bloqueada todavía no fue confirmada explícitamente.
 Guía: `docs/prueba-integral.md`; comando de actualización:
 `scripts/install-standalone.ps1`.
 

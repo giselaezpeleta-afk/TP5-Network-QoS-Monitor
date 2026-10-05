@@ -2,6 +2,21 @@
 
 Actualizado: 2026-10-04.
 
+## Preparación de publicación y Word
+
+- Usuario confirmó diseño de Monitoreo corregido en A55. Último APK copiado a
+  entrega/NetworkQoSMonitor-Android.apk. SHA256:
+  26ecfbd62230cf3ecfb6b901c963f2e28d0c93f5c1c01ed51093b790dcdd904e.
+- Generado entrega/TP5-Network-QoS-Guia.docx con campos personales y enlaces
+  pendientes, instalación y uso; fuente reproducible scripts/generar-word.py.
+- Exclusiones Git: .codex, binarios APK/ZIP de entrega, videos y cachés. No se
+  borraron herramientas ni código nativo. Archivos versionados ~1,29 MiB antes
+  de agregar la guía. Búsqueda acotada de formatos de credenciales sin hallazgos.
+- Publicación GitHub autorizada; URL o usuario/visibilidad solicitados. No hay
+  remote configurado ni gh instalado. Git Credential Manager disponible.
+- Usuario informó video 2:54; se propuso portada 15 s para cumplir 3–5 min.
+  Duración final no confirmada. No afirmar que el video está validado.
+
 ## Ajuste visual de Monitoreo y pruebas de entrega
 
 - Usuario detectó superposición de etiquetas/campos y fondo blanco incompleto
