@@ -4,6 +4,10 @@ Actualizado: 2026-10-04.
 
 ## Preparación de publicación y Word
 
+- Publicado en https://github.com/giselaezpeleta-afk/TP5-Network-QoS-Monitor:
+  origin configurado y push inicial de main completado. Word y código incluidos;
+  APK y videos se adjuntan aparte, no están en el repositorio.
+
 - Usuario confirmó diseño de Monitoreo corregido en A55. Último APK copiado a
   entrega/NetworkQoSMonitor-Android.apk. SHA256:
   26ecfbd62230cf3ecfb6b901c963f2e28d0c93f5c1c01ed51093b790dcdd904e.
